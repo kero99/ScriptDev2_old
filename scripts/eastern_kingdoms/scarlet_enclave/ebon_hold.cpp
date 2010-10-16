@@ -211,7 +211,7 @@ struct MANGOS_DLL_DECL npc_a_special_surpriseAI : public ScriptedAI
                             case 10: DoScriptText(SAY_EXEC_WAITING, m_creature, pPlayer); break;
                             case 11:
                                 DoScriptText(EMOTE_DIES, m_creature);
-                                m_creature->setDeathState(JUST_DIED);
+                                m_creature->SetDeathState(JUST_DIED);
                                 m_creature->SetHealth(0);
                                 return;
                         }
@@ -239,7 +239,7 @@ struct MANGOS_DLL_DECL npc_a_special_surpriseAI : public ScriptedAI
                             case 10: DoScriptText(SAY_EXEC_WAITING, m_creature, pPlayer); break;
                             case 11:
                                 DoScriptText(EMOTE_DIES, m_creature);
-                                m_creature->setDeathState(JUST_DIED);
+                                m_creature->SetDeathState(JUST_DIED);
                                 m_creature->SetHealth(0);
                                 return;
                         }
@@ -267,7 +267,7 @@ struct MANGOS_DLL_DECL npc_a_special_surpriseAI : public ScriptedAI
                             case 10: DoScriptText(SAY_EXEC_WAITING, m_creature, pPlayer); break;
                             case 11:
                                 DoScriptText(EMOTE_DIES, m_creature);
-                                m_creature->setDeathState(JUST_DIED);
+                                m_creature->SetDeathState(JUST_DIED);
                                 m_creature->SetHealth(0);
                                 return;
                         }
@@ -295,7 +295,7 @@ struct MANGOS_DLL_DECL npc_a_special_surpriseAI : public ScriptedAI
                             case 10: DoScriptText(SAY_EXEC_WAITING, m_creature, pPlayer); break;
                             case 11:
                                 DoScriptText(EMOTE_DIES, m_creature);
-                                m_creature->setDeathState(JUST_DIED);
+                                m_creature->SetDeathState(JUST_DIED);
                                 m_creature->SetHealth(0);
                                 return;
                         }
@@ -323,7 +323,7 @@ struct MANGOS_DLL_DECL npc_a_special_surpriseAI : public ScriptedAI
                             case 10: DoScriptText(SAY_EXEC_WAITING, m_creature, pPlayer); break;
                             case 11:
                                 DoScriptText(EMOTE_DIES, m_creature);
-                                m_creature->setDeathState(JUST_DIED);
+                                m_creature->SetDeathState(JUST_DIED);
                                 m_creature->SetHealth(0);
                                 return;
                         }
@@ -351,7 +351,7 @@ struct MANGOS_DLL_DECL npc_a_special_surpriseAI : public ScriptedAI
                             case 10: DoScriptText(SAY_EXEC_WAITING, m_creature, pPlayer); break;
                             case 11:
                                 DoScriptText(EMOTE_DIES, m_creature);
-                                m_creature->setDeathState(JUST_DIED);
+                                m_creature->SetDeathState(JUST_DIED);
                                 m_creature->SetHealth(0);
                                 return;
                         }
@@ -379,7 +379,7 @@ struct MANGOS_DLL_DECL npc_a_special_surpriseAI : public ScriptedAI
                             case 10: DoScriptText(SAY_EXEC_WAITING, m_creature, pPlayer); break;
                             case 11:
                                 DoScriptText(EMOTE_DIES, m_creature);
-                                m_creature->setDeathState(JUST_DIED);
+                                m_creature->SetDeathState(JUST_DIED);
                                 m_creature->SetHealth(0);
                                 return;
                         }
@@ -407,7 +407,7 @@ struct MANGOS_DLL_DECL npc_a_special_surpriseAI : public ScriptedAI
                             case 10: DoScriptText(SAY_EXEC_WAITING, m_creature, pPlayer); break;
                             case 11:
                                 DoScriptText(EMOTE_DIES, m_creature);
-                                m_creature->setDeathState(JUST_DIED);
+                                m_creature->SetDeathState(JUST_DIED);
                                 m_creature->SetHealth(0);
                                 return;
                         }
@@ -435,7 +435,7 @@ struct MANGOS_DLL_DECL npc_a_special_surpriseAI : public ScriptedAI
                             case 10: DoScriptText(SAY_EXEC_WAITING, m_creature, pPlayer); break;
                             case 11:
                                 DoScriptText(EMOTE_DIES, m_creature);
-                                m_creature->setDeathState(JUST_DIED);
+                                m_creature->SetDeathState(JUST_DIED);
                                 m_creature->SetHealth(0);
                                 return;
                         }
@@ -463,7 +463,7 @@ struct MANGOS_DLL_DECL npc_a_special_surpriseAI : public ScriptedAI
                             case 10: DoScriptText(SAY_EXEC_WAITING, m_creature, pPlayer); break;
                             case 11:
                                 DoScriptText(EMOTE_DIES, m_creature);
-                                m_creature->setDeathState(JUST_DIED);
+                                m_creature->SetDeathState(JUST_DIED);
                                 m_creature->SetHealth(0);
                                 return;
                         }
@@ -1153,41 +1153,33 @@ struct MANGOS_DLL_DECL npc_eye_of_acherusAI : public ScriptedAI
 {
     npc_eye_of_acherusAI(Creature *pCreature) : ScriptedAI(pCreature)
     {
-        m_creature->SetActiveObjectState(true);
-        m_creature->SetLevel(55); //else one hack
+    }
+
+    int32 StartTimer;
+    bool Active;
+
+    void Reset()
+    {
+        m_creature->SetLevel(55);
         StartTimer = 2000;
         Active = false;
     }
 
-    uint32 StartTimer;
-    bool Active;
-
-    void Reset(){}
     void AttackStart(Unit *) {}
     void MoveInLineOfSight(Unit*) {}
 
-    void JustDied(Unit*u)
+    void JustDied(Unit* killer)
     {
         if(!m_creature || m_creature->GetTypeId() != TYPEID_UNIT)
             return;
 
-        Unit *target = m_creature->GetCharmer();
+        Unit* owner = m_creature->GetCharmer();
 
-        if(!target || target->GetTypeId() != TYPEID_PLAYER)
+        if(!owner || owner->GetTypeId() != TYPEID_PLAYER)
             return;
 
-        m_creature->SetCharmerGUID(0);
-        target->RemoveAurasDueToSpell(51852);
-        target->SetCharm(NULL);
-
-        ((Player*)target)->GetCamera().ResetView();
-        ((Player*)target)->SetClientControl(m_creature,0);
-        ((Player*)target)->SetMover(NULL);
-
-        m_creature->CleanupsBeforeDelete();
-        m_creature->AddObjectToRemoveList();
-        //m_creature->ForcedDespawn();
-            return;
+        owner->RemoveAurasDueToSpell(51852);
+        m_creature->RemoveAurasDueToSpell(530);
     }
 
     void MovementInform(uint32 uiType, uint32 uiPointId)
@@ -1197,6 +1189,7 @@ struct MANGOS_DLL_DECL npc_eye_of_acherusAI : public ScriptedAI
 
             DoScriptText(-1666452, m_creature);
             m_creature->CastSpell(m_creature, 51890, true);
+//            m_creature->RemoveAurasDueToSpell(51923);
     }
 
     void UpdateAI(const uint32 uiDiff)
@@ -1207,18 +1200,18 @@ struct MANGOS_DLL_DECL npc_eye_of_acherusAI : public ScriptedAI
             {
                 m_creature->CastSpell(m_creature, 70889, true);
                 m_creature->CastSpell(m_creature, 51892, true);
+//                m_creature->CastSpell(m_creature, 51923, true);
+                m_creature->SetSpeedRate(MOVE_FLIGHT, 4.0f,true);
                 DoScriptText(-1666451, m_creature);
-                m_creature->SetSpeedRate(MOVE_FLIGHT, 6.4f,true);
                 m_creature->GetMotionMaster()->MovePoint(0, 1750.8276f, -5873.788f, 147.2266f);
                 Active = true;
             }
-            else StartTimer -= uiDiff;
+            else
+                StartTimer -= uiDiff;
         }
         else
-        {
-            m_creature->CleanupsBeforeDelete();
-            m_creature->AddObjectToRemoveList();
-        }
+            if (StartTimer < uiDiff)
+                m_creature->ForcedDespawn();
     }
 };
 
